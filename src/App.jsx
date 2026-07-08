@@ -573,6 +573,7 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
             badge: item.badge.label,
             badgeStyle: item.badgeStyle,
             product: item.product.label,
+            unitPrice: item.product.unitPrice,
             color: item.color,
             size: item.size,
             quantity: Math.max(1, parseInt(item.quantity) || 1),
@@ -591,7 +592,7 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
 
   return (
     <div>
-      <h2 style={styles.stepTitle}>Your Quote Request</h2>
+      <h2 style={styles.stepTitle}>Your Quote Estimate</h2>
       {cart.length === 0 ? (
         <p style={{ color: "#999", textAlign: "center" }}>No items yet.</p>
       ) : (
@@ -601,7 +602,7 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
               <div style={{ ...badgeCircleStyle(), width: 40, height: 40, overflow: "hidden" }}>
                 <img src={item.badge.image} alt="badge" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <p style={{ fontWeight: 700, fontSize: 14, margin: 0 }}>{item.product.label}</p>
                   {item.size && (
@@ -614,26 +615,40 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
                   {item.badge.label}{item.color ? ` · ${COLOR_SHORT[item.color] || item.color}` : ""}
                 </p>
               </div>
-              <div style={{ background: "#152238", borderRadius: 8, padding: "4px 8px", display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-                <span style={{ color: "#ffcc00", fontSize: 12, fontWeight: 700 }}>Qty</span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={item.quantity}
-                  onChange={(e) => {
-                    const raw = e.target.value.replace(/[^0-9]/g, "");
-                    setCart((prev) => prev.map((c, idx) => (idx === i ? { ...c, quantity: raw } : c)));
-                  }}
-                  onBlur={() => {
-                    setCart((prev) => prev.map((c, idx) => (idx === i ? { ...c, quantity: Math.max(1, parseInt(c.quantity) || 1) } : c)));
-                  }}
-                  style={{ width: 34, background: "transparent", border: "none", color: "#ffcc00", fontSize: 12, fontWeight: 700, textAlign: "center", outline: "none" }}
-                />
+              <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+                <div style={{ background: "#152238", borderRadius: 8, padding: "4px 8px", display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                  <span style={{ color: "#ffcc00", fontSize: 12, fontWeight: 700 }}>Qty</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, "");
+                      setCart((prev) => prev.map((c, idx) => (idx === i ? { ...c, quantity: raw } : c)));
+                    }}
+                    onBlur={() => {
+                      setCart((prev) => prev.map((c, idx) => (idx === i ? { ...c, quantity: Math.max(1, parseInt(c.quantity) || 1) } : c)));
+                    }}
+                    style={{ width: 34, background: "transparent", border: "none", color: "#ffcc00", fontSize: 12, fontWeight: 700, textAlign: "center", outline: "none" }}
+                  />
+                </div>
               </div>
+              <p style={{ width: 70, textAlign: "right", fontWeight: 700, fontSize: 14, color: "#152238", margin: 0, flexShrink: 0 }}>
+                ${(item.product.unitPrice * (parseInt(item.quantity) || 0)).toFixed(2)}
+              </p>
               <button onClick={() => setCart(cart.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontSize: 12 }}>Remove</button>
             </div>
           ))}
+        </div>
+      )}
+
+      {cart.length > 0 && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#152238", borderRadius: 12, padding: "14px 18px", marginBottom: 20 }}>
+          <span style={{ color: "#cdd4de", fontSize: 14, fontWeight: 600 }}>Estimated Total</span>
+          <span style={{ color: "#ffcc00", fontSize: 20, fontWeight: 700 }}>
+            ${cart.reduce((sum, item) => sum + item.product.unitPrice * (parseInt(item.quantity) || 0), 0).toFixed(2)}
+          </span>
         </div>
       )}
 
@@ -744,7 +759,7 @@ export default function App() {
       <div style={{ ...styles.content, textAlign: "center", paddingTop: 60 }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
         <h2 style={{ ...styles.stepTitle, fontSize: 28 }}>Quote Request Sent!</h2>
-        <p style={{ color: "#666", fontSize: 15 }}>We'll follow up by email with pricing and next steps.</p>
+        <p style={{ color: "#666", fontSize: 15 }}>We'll follow up by email with your final quote, terms, and next steps.</p>
         <button onClick={() => { setIsSubmitted(false); setCart([]); setSelectedBadges([]); setActiveBadgeKey(null); setStep(0); }} style={{ ...styles.goldBtn, marginTop: 24 }}>Start a New Request</button>
       </div>
     </div>
