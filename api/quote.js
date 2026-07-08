@@ -27,8 +27,11 @@ export default async function handler(req, res) {
         <td style="padding:6px 10px;border-bottom:1px solid #eee;">${i.color || "-"}</td>
         <td style="padding:6px 10px;border-bottom:1px solid #eee;">${i.size || "-"}</td>
         <td style="padding:6px 10px;border-bottom:1px solid #eee;">${i.quantity}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;">$${(i.unitPrice || 0).toFixed(2)}</td>
+        <td style="padding:6px 10px;border-bottom:1px solid #eee;">$${((i.unitPrice || 0) * i.quantity).toFixed(2)}</td>
       </tr>`
     ).join("");
+    const estimatedTotal = cart.reduce((sum, i) => sum + (i.unitPrice || 0) * i.quantity, 0);
     // Note: badge color removed â€” badges are always signature navy now.
 
     const html = `
@@ -45,9 +48,12 @@ export default async function handler(req, res) {
           <th style="text-align:left;padding:6px 10px;">Color</th>
           <th style="text-align:left;padding:6px 10px;">Size</th>
           <th style="text-align:left;padding:6px 10px;">Qty</th>
+          <th style="text-align:left;padding:6px 10px;">Unit Price</th>
+          <th style="text-align:left;padding:6px 10px;">Line Total</th>
         </tr></thead>
         <tbody>${itemRows}</tbody>
       </table>
+      <p style="text-align:right;font-size:16px;margin-top:12px;"><strong>Estimated Total: $${estimatedTotal.toFixed(2)}</strong></p>
       ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
     `;
 
