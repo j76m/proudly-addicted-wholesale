@@ -523,6 +523,7 @@ function StepConfigure({
                         <input
                           type="text"
                           inputMode="numeric"
+                            autoComplete="off"
                           pattern="[0-9]*"
                           value={quantities[`${tile.key}|${s}`] || ""}
                           onChange={(e) => setQty(tile.key, s, e.target.value.replace(/[^0-9]/g, ""))}
@@ -626,6 +627,7 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
                   <input
                     type="text"
                     inputMode="numeric"
+                            autoComplete="off"
                     pattern="[0-9]*"
                     value={item.quantity}
                     onChange={(e) => {
