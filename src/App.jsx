@@ -634,6 +634,9 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
                   />
                 </div>
               </div>
+              <p style={{ width: 60, textAlign: "center", fontSize: 12, color: "#888", margin: 0, flexShrink: 0 }}>
+                ${item.product.unitPrice.toFixed(2)} ea
+              </p>
               <p style={{ width: 70, textAlign: "right", fontWeight: 700, fontSize: 14, color: "#152238", margin: 0, flexShrink: 0 }}>
                 ${(item.product.unitPrice * (parseInt(item.quantity) || 0)).toFixed(2)}
               </p>
