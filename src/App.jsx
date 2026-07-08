@@ -726,6 +726,7 @@ export default function App() {
   };
 
   const activeBadge = selectedBadges.find((b) => b.key === activeBadgeKey) || selectedBadges[0] || null;
+  const cartUnitTotal = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
 
   const goToConfigure = () => {
     setActiveBadgeKey(selectedBadges[0]?.key || null);
@@ -778,7 +779,7 @@ export default function App() {
         <img src="/logo full stack 512px.png" alt="Proudly Addicted" style={{ height: 64, width: "auto" }} />
         <button onClick={() => setStep(2)} style={{ position: "absolute", right: 20, background: "none", border: "none", cursor: "pointer", color: "#ffcc00", fontSize: 22 }}>
           📋
-          {cart.length > 0 && <span style={{ position: "absolute", top: -4, right: -4, background: "#ffcc00", color: "#111", borderRadius: "50%", width: 16, height: 16, fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{cart.length}</span>}
+          {cart.length > 0 && <span style={{ position: "absolute", top: -4, right: -4, background: "#ffcc00", color: "#111", borderRadius: "50%", width: 16, height: 16, fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{cartUnitTotal}</span>}
         </button>
       </div>
       <div style={styles.content}>
@@ -800,7 +801,7 @@ export default function App() {
             selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct}
             selectedColor={selectedColor} setSelectedColor={setSelectedColor}
             quantities={quantities} setQuantities={setQuantities}
-            zoomedSrc={zoomedSrc} setZoomedSrc={setZoomedSrc} addAllToCart={addAllToCart} cartCount={cart.length}
+            zoomedSrc={zoomedSrc} setZoomedSrc={setZoomedSrc} addAllToCart={addAllToCart} cartCount={cartUnitTotal}
           />
         )}
         {step === 2 && (
