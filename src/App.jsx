@@ -235,7 +235,7 @@ function StepBadge({
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 18 }}>
-        {[{ id: "grid", label: "▦ Grid" }, { id: "grouped", label: "☑ Grouped" }, { id: "list", label: "☰ List" }].map((v) => (
+        {[{ id: "grid", label: "▦ Grid" }, { id: "grouped", label: "☑ Grouped" }].map((v) => (
           <button key={v.id} onClick={() => setBadgeView(v.id)} style={{
             padding: "6px 18px", borderRadius: 20, fontWeight: 700, fontSize: 12, cursor: "pointer",
             border: badgeView === v.id ? "2px solid #152238" : "1px solid #ddd",
@@ -269,30 +269,6 @@ function StepBadge({
                   }}>✓</div>
                 )}
                 <p style={{ fontSize: 11, color: isRec ? "#152238" : "#888", fontWeight: isRec || active ? 700 : 400, marginTop: 4 }}>{tile.label}</p>
-              </div>
-            );
-          })}
-        </div>
-      ) : badgeView === "list" ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {sorted.map((tile) => {
-            const isRec = recommendedIds.includes(tile.passion.id);
-            const active = !!selectedBadges.find((b) => b.key === tile.key);
-            return (
-              <div key={tile.key} onClick={() => toggleBadge(tile)} style={{
-                display: "flex", alignItems: "center", gap: 14, border: active ? "2px solid #ffcc00" : "1px solid #eee",
-                borderRadius: 10, padding: "8px 12px", cursor: "pointer",
-              }}>
-                <div style={{ width: 40, height: 40, borderRadius: "50%", overflow: "hidden", flexShrink: 0 }}>
-                  <img src={tile.image} alt={tile.label} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-                <p style={{ flex: 1, fontWeight: isRec || active ? 700 : 400, fontSize: 14, color: "#1a1a2e", margin: 0 }}>{tile.label}</p>
-                {active && (
-                  <div style={{
-                    background: "#ffcc00", color: "#111", borderRadius: "50%", width: 22, height: 22, fontSize: 12, fontWeight: 900,
-                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                  }}>✓</div>
-                )}
               </div>
             );
           })}
