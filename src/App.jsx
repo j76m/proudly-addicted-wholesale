@@ -360,7 +360,7 @@ function StepBadge({
 function StepConfigure({
   selectedBadges, activeBadge, activeBadgeKey, setActiveBadgeKey, badgeStyle, setStep,
   productView, setProductView, selectedProduct, setSelectedProduct, selectedColor, setSelectedColor,
-  quantities, setQuantities, zoomedSrc, setZoomedSrc, addAllToCart,
+  quantities, setQuantities, zoomedSrc, setZoomedSrc, addAllToCart, cartCount,
 }) {
   const photo = selectedProduct ? getGarmentPhoto(activeBadge, badgeStyle, selectedProduct, selectedColor) : null;
   const sizeColumns = selectedProduct ? (selectedProduct.sizes.length ? selectedProduct.sizes : ["OS"]) : [];
@@ -538,9 +538,14 @@ function StepConfigure({
 
           <p style={{ textAlign: "center", color: "#666", fontSize: 13, marginBottom: 16 }}>{totalUnits} unit{totalUnits !== 1 ? "s" : ""} entered</p>
 
-          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <button onClick={() => { setSelectedProduct(null); setSelectedColor(null); setQuantities({}); }} style={styles.ghostBtn}>← Back to Products</button>
             <button disabled={totalUnits === 0} onClick={addAllToCart} style={{ ...styles.goldBtn, opacity: totalUnits ? 1 : 0.4 }}>Add to Quote</button>
+            {cartCount > 0 && (
+              <button onClick={() => setStep(2)} style={{ ...styles.ghostBtn, borderColor: "#152238", color: "#152238" }}>
+                View Quote ({cartCount})
+              </button>
+            )}
           </div>
         </>
       )}
@@ -748,10 +753,7 @@ export default function App() {
     });
     if (newItems.length === 0) return;
     setCart((prev) => [...prev, ...newItems]);
-    setSelectedProduct(null);
-    setSelectedColor(null);
     setQuantities({});
-    setStep(2);
   };
 
   if (isSubmitted) return (
@@ -796,7 +798,7 @@ export default function App() {
             selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct}
             selectedColor={selectedColor} setSelectedColor={setSelectedColor}
             quantities={quantities} setQuantities={setQuantities}
-            zoomedSrc={zoomedSrc} setZoomedSrc={setZoomedSrc} addAllToCart={addAllToCart}
+            zoomedSrc={zoomedSrc} setZoomedSrc={setZoomedSrc} addAllToCart={addAllToCart} cartCount={cart.length}
           />
         )}
         {step === 2 && (
