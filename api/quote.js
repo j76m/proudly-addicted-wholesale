@@ -34,6 +34,21 @@ export default async function handler(req, res) {
     const estimatedTotal = cart.reduce((sum, i) => sum + (i.unitPrice || 0) * i.quantity, 0);
     // Note: badge color removed â€” badges are always signature navy now.
 
+    // Build a CSV attachment so the order can be opened directly in Excel/Sheets, no copy-paste needed.
+    const csvEscape = (val) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+    const csvLines = [
+      ["Product", "Badge", "Color", "Size", "Qty", "Unit Price", "Line Total"].map(csvEscape).join(","),
+      ...cart.map((i) => [
+        i.product, i.badge, i.color || "-", i.size || "-", i.quantity,
+        (i.unitPrice || 0).toFixed(2), ((i.unitPrice || 0) * i.quantity).toFixed(2),
+      ].map(csvEscape).join(",")),
+      "",
+      ["", "", "", "", "", "Estimated Total", estimatedTotal.toFixed(2)].map(csvEscape).join(","),
+    ];
+    const csvContent = csvLines.join("\r\n");
+    const csvBase64 = Buffer.from(csvContent, "utf-8").toString("base64");
+    const csvFilename = `wholesale-quote${orderName ? `-${orderName.replace(/[^a-z0-9]/gi, "-")}` : ""}.csv`;
+
     const html = `
       <h2>New Wholesale Quote Request</h2>
       ${orderName ? `<p><strong>Order Name/ID:</strong> ${orderName}</p>` : ""}
@@ -69,6 +84,9 @@ export default async function handler(req, res) {
         reply_to: requesterEmail,
         subject: `Wholesale Quote Request${orderName ? ` â€” ${orderName}` : ""} â€” ${company}`,
         html,
+        attachments: [
+          { filename: csvFilename, content: csvBase64 },
+        ],
       }),
     });
 
