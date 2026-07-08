@@ -58,7 +58,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Wholesale Portal <onboarding@resend.dev>",
+        from: "Wholesale Portal <wholesale@proudlyaddicted.com>",
         to: ["proudlyaddicted@gmail.com"],
         reply_to: requesterEmail,
         subject: `Wholesale Quote Request${orderName ? ` â€” ${orderName}` : ""} â€” ${company}`,
