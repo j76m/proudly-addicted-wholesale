@@ -98,17 +98,16 @@ function CategoryBlock({ category, catTiles, selectedBadges, setSelectedBadges, 
   );
 }
 
-// Manually splits categories into 3 flex columns, balanced by tile count.
-// Avoids CSS `column-count`, which has a known Safari bug where it sometimes
-// renders fewer columns than specified until something forces a reflow.
+// Splits categories into 3 columns sequentially (like a phone book), so each
+// column reads in strict alphabetical order rather than being reshuffled for
+// height-balance.
 function ThreeColumnGroups({ categories, selectedBadges, setSelectedBadges, toggleBadge }) {
-  const columns = [[], [], []];
-  const weights = [0, 0, 0];
-  categories.forEach((cat) => {
-    const lightest = weights.indexOf(Math.min(...weights));
-    columns[lightest].push(cat);
-    weights[lightest] += cat.tiles.length + 1;
-  });
+  const perColumn = Math.ceil(categories.length / 3);
+  const columns = [
+    categories.slice(0, perColumn),
+    categories.slice(perColumn, perColumn * 2),
+    categories.slice(perColumn * 2),
+  ];
   return (
     <div style={{ display: "flex", gap: 28, marginTop: 12, alignItems: "flex-start" }}>
       {columns.map((col, i) => (
