@@ -54,7 +54,7 @@ function groupTilesByCategory(tiles) {
     if (!groups[cat]) groups[cat] = [];
     groups[cat].push(tile);
   });
-  return CATEGORY_ORDER.filter((c) => groups[c]).map((c) => ({ category: c, tiles: groups[c] }));
+  return Object.keys(groups).sort((a, b) => a.localeCompare(b)).map((c) => ({ category: c, tiles: groups[c] }));
 }
 
 // Renders one category block (header checkbox + its badge rows).
