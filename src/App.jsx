@@ -57,6 +57,74 @@ function groupTilesByCategory(tiles) {
   return CATEGORY_ORDER.filter((c) => groups[c]).map((c) => ({ category: c, tiles: groups[c] }));
 }
 
+// Renders one category block (header checkbox + its badge rows).
+function CategoryBlock({ category, catTiles, selectedBadges, setSelectedBadges, toggleBadge }) {
+  const allSelected = catTiles.every((t) => selectedBadges.find((b) => b.key === t.key));
+  const toggleAll = () => {
+    setSelectedBadges((prev) => {
+      if (allSelected) return prev.filter((b) => !catTiles.find((t) => t.key === b.key));
+      const toAdd = catTiles.filter((t) => !prev.find((b) => b.key === t.key));
+      return [...prev, ...toAdd];
+    });
+  };
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div onClick={toggleAll} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", marginBottom: 8, borderBottom: "1px solid #eee", paddingBottom: 6 }}>
+        <div style={{
+          width: 18, height: 18, borderRadius: 4, border: "2px solid #152238",
+          background: allSelected ? "#152238" : "transparent",
+          display: "flex", alignItems: "center", justifyContent: "center", color: "#ffcc00", fontSize: 11, fontWeight: 900,
+        }}>{allSelected ? "✓" : ""}</div>
+        <p style={{ fontWeight: 700, fontSize: 14, color: "#152238", margin: 0 }}>{category}</p>
+        <span style={{ fontSize: 11, color: "#aaa" }}>(select all)</span>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingLeft: 4 }}>
+        {catTiles.map((tile) => {
+          const active = !!selectedBadges.find((b) => b.key === tile.key);
+          return (
+            <div key={tile.key} onClick={() => toggleBadge(tile)} style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", padding: "6px 0" }}>
+              <div style={{
+                width: 18, height: 18, borderRadius: 4, border: "2px solid #ccc", flexShrink: 0,
+                background: active ? "#ffcc00" : "transparent",
+                display: "flex", alignItems: "center", justifyContent: "center", color: "#111", fontSize: 11, fontWeight: 900,
+              }}>{active ? "✓" : ""}</div>
+              <img src={tile.image} alt={tile.label} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              <p style={{ fontSize: 14, color: active ? "#152238" : "#555", fontWeight: active ? 700 : 400, margin: 0 }}>{tile.label}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Manually splits categories into 3 flex columns, balanced by tile count.
+// Avoids CSS `column-count`, which has a known Safari bug where it sometimes
+// renders fewer columns than specified until something forces a reflow.
+function ThreeColumnGroups({ categories, selectedBadges, setSelectedBadges, toggleBadge }) {
+  const columns = [[], [], []];
+  const weights = [0, 0, 0];
+  categories.forEach((cat) => {
+    const lightest = weights.indexOf(Math.min(...weights));
+    columns[lightest].push(cat);
+    weights[lightest] += cat.tiles.length + 1;
+  });
+  return (
+    <div style={{ display: "flex", gap: 28, marginTop: 12, alignItems: "flex-start" }}>
+      {columns.map((col, i) => (
+        <div key={i} style={{ flex: 1, minWidth: 0 }}>
+          {col.map(({ category, tiles: catTiles }) => (
+            <CategoryBlock
+              key={category} category={category} catTiles={catTiles}
+              selectedBadges={selectedBadges} setSelectedBadges={setSelectedBadges} toggleBadge={toggleBadge}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── GARMENT MOCKUP PHOTOS — reused from the retail product library ──────────
 const PRODUCT_FOLDER = { beanie: "classic-beanie", crew: "classic-crew", hoodie: "classic-ellie", tshirt: "classic-tee", dadhat: "classic-dadhat" };
 const RETRO_PRODUCT_FOLDER = { beanie: "retro-beanie", crew: "retro-crew", hoodie: "retro-ellie", tshirt: "retro-tee", dadhat: "retro-dadhat" };
@@ -290,47 +358,12 @@ function StepBadge({
           })}
         </div>
       ) : (
-        <div style={{ columnCount: 3, columnGap: 28, marginTop: 12 }}>
-          {groupTilesByCategory(sorted).map(({ category, tiles: catTiles }) => {
-            const allSelected = catTiles.every((t) => selectedBadges.find((b) => b.key === t.key));
-            const toggleAll = () => {
-              setSelectedBadges((prev) => {
-                if (allSelected) return prev.filter((b) => !catTiles.find((t) => t.key === b.key));
-                const toAdd = catTiles.filter((t) => !prev.find((b) => b.key === t.key));
-                return [...prev, ...toAdd];
-              });
-            };
-            return (
-              <div key={category} style={{ breakInside: "avoid", marginBottom: 20 }}>
-                <div onClick={toggleAll} style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", marginBottom: 8, borderBottom: "1px solid #eee", paddingBottom: 6 }}>
-                  <div style={{
-                    width: 18, height: 18, borderRadius: 4, border: "2px solid #152238",
-                    background: allSelected ? "#152238" : "transparent",
-                    display: "flex", alignItems: "center", justifyContent: "center", color: "#ffcc00", fontSize: 11, fontWeight: 900,
-                  }}>{allSelected ? "✓" : ""}</div>
-                  <p style={{ fontWeight: 700, fontSize: 14, color: "#152238", margin: 0 }}>{category}</p>
-                  <span style={{ fontSize: 11, color: "#aaa" }}>(select all)</span>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingLeft: 4 }}>
-                  {catTiles.map((tile) => {
-                    const active = !!selectedBadges.find((b) => b.key === tile.key);
-                    return (
-                      <div key={tile.key} onClick={() => toggleBadge(tile)} style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", padding: "6px 0" }}>
-                        <div style={{
-                          width: 18, height: 18, borderRadius: 4, border: "2px solid #ccc", flexShrink: 0,
-                          background: active ? "#ffcc00" : "transparent",
-                          display: "flex", alignItems: "center", justifyContent: "center", color: "#111", fontSize: 11, fontWeight: 900,
-                        }}>{active ? "✓" : ""}</div>
-                        <img src={tile.image} alt={tile.label} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-                        <p style={{ fontSize: 14, color: active ? "#152238" : "#555", fontWeight: active ? 700 : 400, margin: 0 }}>{tile.label}</p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ThreeColumnGroups
+          categories={groupTilesByCategory(sorted)}
+          selectedBadges={selectedBadges}
+          setSelectedBadges={setSelectedBadges}
+          toggleBadge={toggleBadge}
+        />
       )}
 
       {selectedBadges.length > 0 && (
