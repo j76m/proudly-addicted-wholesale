@@ -250,7 +250,7 @@ function StepBadge({
         ))}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 18 }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 32 }}>
         {[{ id: "grouped", label: "☑ Grouped" }, { id: "grid", label: "▦ Grid" }].map((v) => (
           <button key={v.id} onClick={() => setBadgeView(v.id)} style={{
             padding: "6px 18px", borderRadius: 20, fontWeight: 700, fontSize: 12, cursor: "pointer",
@@ -290,7 +290,7 @@ function StepBadge({
           })}
         </div>
       ) : (
-        <div style={{ columnCount: 4, columnGap: 24 }}>
+        <div style={{ columnCount: 3, columnGap: 28, marginTop: 12 }}>
           {groupTilesByCategory(sorted).map(({ category, tiles: catTiles }) => {
             const allSelected = catTiles.every((t) => selectedBadges.find((b) => b.key === t.key));
             const toggleAll = () => {
