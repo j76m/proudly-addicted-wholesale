@@ -31,17 +31,17 @@ function buildBadgeTiles(badgeStyle) {
   const tiles = [];
   PASSIONS.forEach((p) => {
     if (badgeStyle === "retro") {
-      tiles.push({ key: `retro-${p.id}-base`, passion: p, variantSuffix: "", label: p.label, image: `/badges/retro-${p.fileSlug}.png` });
+      tiles.push({ key: `retro-${p.id}-base`, passion: p, variantSuffix: "", label: p.label, image: `/badges/retro-${p.fileSlug}.jpg` });
       return;
     }
     if (p.genderVariant) {
-      tiles.push({ key: `classic-${p.id}-guy`, passion: p, variantSuffix: "guy", label: `${p.label} (Guy)`, image: `/badges/classic-${p.fileSlug}-guy.png` });
-      tiles.push({ key: `classic-${p.id}-gal`, passion: p, variantSuffix: "gal", label: `${p.label} (Gal)`, image: `/badges/classic-${p.fileSlug}-gal.png` });
+      tiles.push({ key: `classic-${p.id}-guy`, passion: p, variantSuffix: "guy", label: `${p.label} (Guy)`, image: `/badges/classic-${p.fileSlug}-guy.jpg` });
+      tiles.push({ key: `classic-${p.id}-gal`, passion: p, variantSuffix: "gal", label: `${p.label} (Gal)`, image: `/badges/classic-${p.fileSlug}-gal.jpg` });
     } else if (p.styleVariant) {
-      tiles.push({ key: `classic-${p.id}-base`, passion: p, variantSuffix: "", label: p.label, image: `/badges/classic-${p.fileSlug}.png` });
-      tiles.push({ key: `classic-${p.id}-${p.styleVariant.suffix}`, passion: p, variantSuffix: p.styleVariant.suffix, label: `${p.label} ${p.styleVariant.label}`, image: `/badges/classic-${p.fileSlug}-${p.styleVariant.suffix}.png` });
+      tiles.push({ key: `classic-${p.id}-base`, passion: p, variantSuffix: "", label: p.label, image: `/badges/classic-${p.fileSlug}.jpg` });
+      tiles.push({ key: `classic-${p.id}-${p.styleVariant.suffix}`, passion: p, variantSuffix: p.styleVariant.suffix, label: `${p.label} ${p.styleVariant.label}`, image: `/badges/classic-${p.fileSlug}-${p.styleVariant.suffix}.jpg` });
     } else {
-      tiles.push({ key: `classic-${p.id}-base`, passion: p, variantSuffix: "", label: p.label, image: `/badges/classic-${p.fileSlug}.png` });
+      tiles.push({ key: `classic-${p.id}-base`, passion: p, variantSuffix: "", label: p.label, image: `/badges/classic-${p.fileSlug}.jpg` });
     }
   });
   return tiles.sort((a, b) => a.label.localeCompare(b.label));
