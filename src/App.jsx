@@ -299,14 +299,14 @@ function StepBadge({
                   {catTiles.map((tile) => {
                     const active = !!selectedBadges.find((b) => b.key === tile.key);
                     return (
-                      <div key={tile.key} onClick={() => toggleBadge(tile)} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "4px 0" }}>
+                      <div key={tile.key} onClick={() => toggleBadge(tile)} style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", padding: "6px 0" }}>
                         <div style={{
-                          width: 16, height: 16, borderRadius: 4, border: "2px solid #ccc",
+                          width: 18, height: 18, borderRadius: 4, border: "2px solid #ccc", flexShrink: 0,
                           background: active ? "#ffcc00" : "transparent",
-                          display: "flex", alignItems: "center", justifyContent: "center", color: "#111", fontSize: 10, fontWeight: 900,
+                          display: "flex", alignItems: "center", justifyContent: "center", color: "#111", fontSize: 11, fontWeight: 900,
                         }}>{active ? "✓" : ""}</div>
-                        <img src={tile.image} alt={tile.label} style={{ width: 26, height: 26, borderRadius: "50%", objectFit: "cover" }} />
-                        <p style={{ fontSize: 13, color: active ? "#152238" : "#555", fontWeight: active ? 700 : 400, margin: 0 }}>{tile.label}</p>
+                        <img src={tile.image} alt={tile.label} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+                        <p style={{ fontSize: 14, color: active ? "#152238" : "#555", fontWeight: active ? 700 : 400, margin: 0 }}>{tile.label}</p>
                       </div>
                     );
                   })}
