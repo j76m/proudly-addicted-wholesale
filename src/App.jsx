@@ -146,6 +146,22 @@ function badgeCircleStyle() {
   return { width: 70, height: 70, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" };
 }
 
+// Groups flat cart line items (one per badge/product/color/size) into cards
+// keyed by badge+product+color, so the header shows once and sizes list beneath it.
+function groupCartItems(cart) {
+  const groups = [];
+  cart.forEach((item) => {
+    const key = `${item.badge.key}|${item.product.id}|${item.color || "none"}`;
+    let group = groups.find((g) => g.key === key);
+    if (!group) {
+      group = { key, badge: item.badge, product: item.product, color: item.color, items: [] };
+      groups.push(group);
+    }
+    group.items.push(item);
+  });
+  return groups;
+}
+
 // ─── AUTH SCREEN ─────────────────────────────────────────────────────────────
 function AuthGate({ onSignedIn }) {
   const [email, setEmail] = useState("");
@@ -578,52 +594,60 @@ function StepQuote({ cart, setCart, session, selectedBadges, setSelectedBadges, 
       {cart.length === 0 ? (
         <p style={{ color: "#999", textAlign: "center" }}>No items yet.</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-          {cart.map((item, i) => (
-            <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 12, background: "#f8f8f8", borderRadius: 12, padding: "10px 14px", border: "1px solid #eee" }}>
-              <div style={{ ...badgeCircleStyle(), width: 40, height: 40, overflow: "hidden" }}>
-                <img src={item.badge.image} alt="badge" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <p style={{ fontWeight: 700, fontSize: 14, margin: 0 }}>{item.product.label}</p>
-                  {item.size && (
-                    <span style={{ background: "#152238", color: "#ffcc00", borderRadius: 8, padding: "4px 10px", fontSize: 14, fontWeight: 700 }}>
-                      {item.size}
-                    </span>
-                  )}
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 20 }}>
+          {groupCartItems(cart).map((group) => (
+            <div key={group.key} style={{ background: "#f8f8f8", borderRadius: 12, padding: "12px 14px", border: "1px solid #eee" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                <div style={{ ...badgeCircleStyle(), width: 40, height: 40, overflow: "hidden", flexShrink: 0 }}>
+                  <img src={group.badge.image} alt="badge" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
-                <p style={{ fontSize: 12, color: "#888", margin: "2px 0 0" }}>
-                  {item.badge.label}{item.color ? ` · ${COLOR_SHORT[item.color] || item.color}` : ""}
-                </p>
-              </div>
-              <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-                <div style={{ background: "#152238", borderRadius: 8, padding: "4px 8px", display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-                  <span style={{ color: "#ffcc00", fontSize: 12, fontWeight: 700 }}>Qty</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                            autoComplete="off"
-                    pattern="[0-9]*"
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/[^0-9]/g, "");
-                      setCart((prev) => prev.map((c, idx) => (idx === i ? { ...c, quantity: raw } : c)));
-                    }}
-                    onBlur={() => {
-                      setCart((prev) => prev.map((c, idx) => (idx === i ? { ...c, quantity: Math.max(1, parseInt(c.quantity) || 1) } : c)));
-                    }}
-                    style={{ width: 34, background: "transparent", border: "none", color: "#ffcc00", fontSize: 12, fontWeight: 700, textAlign: "center", outline: "none" }}
-                  />
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontWeight: 700, fontSize: 14, margin: 0 }}>{group.product.label}</p>
+                  <p style={{ fontSize: 12, color: "#888", margin: "2px 0 0" }}>
+                    {group.badge.label}{group.color ? ` · ${COLOR_SHORT[group.color] || group.color}` : ""}
+                  </p>
                 </div>
               </div>
-              <p style={{ width: 60, textAlign: "center", fontSize: 12, color: "#888", margin: 0, flexShrink: 0 }}>
-                ${item.product.unitPrice.toFixed(2)} ea
-              </p>
-              <p style={{ width: 70, textAlign: "right", fontWeight: 700, fontSize: 14, color: "#152238", margin: 0, flexShrink: 0 }}>
-                ${(item.product.unitPrice * (parseInt(item.quantity) || 0)).toFixed(2)}
-              </p>
-              <button onClick={() => setCart(cart.filter((_, idx) => idx !== i))} style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontSize: 12 }}>Remove</button>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingLeft: 52 }}>
+                {group.items.map((item) => (
+                  <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid #e8e8e8", paddingTop: 6 }}>
+                    {item.size ? (
+                      <span style={{ background: "#152238", color: "#ffcc00", borderRadius: 8, padding: "4px 10px", fontSize: 13, fontWeight: 700, width: 44, textAlign: "center" }}>
+                        {item.size}
+                      </span>
+                    ) : (
+                      <span style={{ width: 44 }} />
+                    )}
+                    <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+                      <div style={{ background: "#152238", borderRadius: 8, padding: "4px 8px", display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
+                        <span style={{ color: "#ffcc00", fontSize: 12, fontWeight: 700 }}>Qty</span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          autoComplete="off"
+                          pattern="[0-9]*"
+                          value={item.quantity}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9]/g, "");
+                            setCart((prev) => prev.map((c) => (c.id === item.id ? { ...c, quantity: raw } : c)));
+                          }}
+                          onBlur={() => {
+                            setCart((prev) => prev.map((c) => (c.id === item.id ? { ...c, quantity: Math.max(1, parseInt(c.quantity) || 1) } : c)));
+                          }}
+                          style={{ width: 34, background: "transparent", border: "none", color: "#ffcc00", fontSize: 12, fontWeight: 700, textAlign: "center", outline: "none" }}
+                        />
+                      </div>
+                    </div>
+                    <p style={{ width: 60, textAlign: "center", fontSize: 12, color: "#888", margin: 0, flexShrink: 0 }}>
+                      ${item.product.unitPrice.toFixed(2)} ea
+                    </p>
+                    <p style={{ width: 70, textAlign: "right", fontWeight: 700, fontSize: 14, color: "#152238", margin: 0, flexShrink: 0 }}>
+                      ${(item.product.unitPrice * (parseInt(item.quantity) || 0)).toFixed(2)}
+                    </p>
+                    <button onClick={() => setCart((prev) => prev.filter((c) => c.id !== item.id))} style={{ background: "none", border: "none", color: "#bbb", cursor: "pointer", fontSize: 12 }}>Remove</button>
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
