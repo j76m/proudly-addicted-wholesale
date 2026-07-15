@@ -78,17 +78,17 @@ function CategoryBlock({ category, catTiles, selectedBadges, setSelectedBadges, 
         <p style={{ fontWeight: 700, fontSize: 14, color: "#152238", margin: 0 }}>{category}</p>
         <span style={{ fontSize: 11, color: "#aaa" }}>(select all)</span>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 6, paddingLeft: 4 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingLeft: 4 }}>
         {catTiles.map((tile) => {
           const active = !!selectedBadges.find((b) => b.key === tile.key);
           return (
             <div key={tile.key} onClick={() => toggleBadge(tile)} style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer", padding: "6px 0" }}>
               <div style={{
-                width: 18, height: 18, borderRadius: 4, border: "2px solid #ccc", flexShrink: 0,
+                width: 20, height: 20, borderRadius: 4, border: "2px solid #ccc", flexShrink: 0,
                 background: active ? "#ffcc00" : "transparent",
-                display: "flex", alignItems: "center", justifyContent: "center", color: "#111", fontSize: 11, fontWeight: 900,
+                display: "flex", alignItems: "center", justifyContent: "center", color: "#111", fontSize: 12, fontWeight: 900,
               }}>{active ? "✓" : ""}</div>
-              <img src={tile.image} alt={tile.label} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+              <img src={tile.image} alt={tile.label} style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
               <p style={{ fontSize: 14, color: active ? "#152238" : "#555", fontWeight: active ? 700 : 400, margin: 0 }}>{tile.label}</p>
             </div>
           );
