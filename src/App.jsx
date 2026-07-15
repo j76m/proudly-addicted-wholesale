@@ -251,7 +251,7 @@ function StepBadge({
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 18 }}>
-        {[{ id: "grid", label: "▦ Grid" }, { id: "grouped", label: "☑ Grouped" }].map((v) => (
+        {[{ id: "grouped", label: "☑ Grouped" }, { id: "grid", label: "▦ Grid" }].map((v) => (
           <button key={v.id} onClick={() => setBadgeView(v.id)} style={{
             padding: "6px 18px", borderRadius: 20, fontWeight: 700, fontSize: 12, cursor: "pointer",
             border: badgeView === v.id ? "2px solid #152238" : "1px solid #ddd",
@@ -694,7 +694,7 @@ export default function App() {
   const [selectedBadges, setSelectedBadges] = useState([]);
   const [activeBadgeKey, setActiveBadgeKey] = useState(null);
   const [productView, setProductView] = useState("grid");
-  const [badgeView, setBadgeView] = useState("grid");
+  const [badgeView, setBadgeView] = useState("grouped");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantities, setQuantities] = useState({});
