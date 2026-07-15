@@ -290,7 +290,7 @@ function StepBadge({
           })}
         </div>
       ) : (
-        <div style={{ columnCount: 3, columnGap: 28 }}>
+        <div style={{ columnCount: 4, columnGap: 24 }}>
           {groupTilesByCategory(sorted).map(({ category, tiles: catTiles }) => {
             const allSelected = catTiles.every((t) => selectedBadges.find((b) => b.key === t.key));
             const toggleAll = () => {
